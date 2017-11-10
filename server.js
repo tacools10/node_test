@@ -8,7 +8,9 @@ const app = express();
 var db;
 
 app.set('view engine', 'ejs');
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
 
 MongoClient.connect('mongodb://tacools10:Zidane10@ds255715.mlab.com:55715/harvey_spector_test', (err, database) => {
     if (err) return console.log(err);
@@ -35,6 +37,23 @@ app.post('/quotes', (req, res) => {
         res.redirect('/');
     })
 });
+
+app.put('/quotes', (req, res) => {
+    db.collection('quotes')
+        .findOneAndUpdate({name: 'Thomas'}, {
+            $set: {
+                name: req.body.name,
+                quote: req.body.quote
+            }
+        }, {
+            sort: {_id: -1},
+            upsert: true
+        }, (err, result) => {
+            if (err) return res.send(err);
+            res.send(result);
+        })
+});
+
 
 
 
